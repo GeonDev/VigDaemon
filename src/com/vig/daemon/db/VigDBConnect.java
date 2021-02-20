@@ -8,13 +8,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /*******************************************************************************
  *  @packageName: com.vig.daemon.db
  *  @fileName: DBconnectionImpl.java
- *  @content: DB connection ¹× query ±¸Çö
+ *  @content: DB connection ï¿½ï¿½ query ï¿½ï¿½ï¿½ï¿½
  *  
  *  <pre>
  *  << Modification Information >>
@@ -26,53 +24,42 @@ import org.slf4j.LoggerFactory;
 
 public class VigDBConnect {
 	
-	static final Logger LOGGER = LoggerFactory.getLogger(VigDBConnect.class);
+
 	Connection conn = null;
 	DBDto DBinfo = null;
 	Statement stmt = null;
 	ResultSet rs = null;
+
 	
-	/**
-	 * DB Á¢¼Ó
-	 */	
 	public Connection connectDB(DBDto DBinfo) {
 		this.DBinfo = DBinfo;
 		
 		try {
 			Class.forName(DBinfo.getDriver());
 			conn = DriverManager.getConnection(DBinfo.getUrl(), DBinfo.getID(), DBinfo.getPW());
-			// autoCommitÀº º¸Åë ²ö´Ù. -> µ¥ÀÌÅÍ »ðÀÔÀÌ ¼öÃµ°³¾¿ ¹ß»ýÇÒ¼ö ÀÖÀ½
-			// 1. º¯°æÀÌ »ý±æ¶§ ¸¶´Ù Ä¿¹ÔÀ» ÇÏ¸é ¼Óµµ°¡ ¸Å¿ì ´À¸² -> ¸ð¾Æ¼­ Ã³¸®
-			// 2. µ¥ÀÌÅÍ »ðÀÔ Áß ¹®Á¦°¡ ¹ß»ýÇÏ¸é Áï½Ã rollback ÇÏ±â À§ÇÏ¿©
+
 			conn.setAutoCommit(false);
-			
-//			³»°¡ °ü¸®ÇÏ´Â DB¸¦ Ã¼Å© ÇÏ¿©¾ß ÇÒ¶§-> Å¸»çÀÇ DB ¼³Á¤À» ¹Ù²Ü¼öµµ ÀÖÀ½À¸·Î			
-//			if(DBinfo.getType().equals("BACK_UP_DB")) {
-//				conn.setAutoCommit(false);
-//			}
 			
 			stmt = conn.createStatement();
 			
 		}catch (Exception e) {
-			LOGGER.error("[ERROR] Fail to connect to Database :",e);
+			
 			
 			if ( stmt != null ) try{stmt.close();}catch(Exception ignore){}
 			if ( conn != null ) try{conn.close();}catch(Exception ignore){}
 			
-			// 5ÃÊ ´ë±â ÈÄ, ÇÔ¼ö Àç½ÇÇà
+			// 5ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 			try { Thread.sleep(5000); } 
 			catch (Exception a) { } 
 			finally {
-				LOGGER.info("Start to re-connect DB ");
+			
 				connectDB(this.DBinfo);
 			}
 		} 
 		return conn;
 	}
 
-	/**
-	 * DB Á¢¼Ó È®ÀÎ
-	 */
+
 	public boolean isConnected() {
 		
 		try {
@@ -86,9 +73,7 @@ public class VigDBConnect {
 		}
 	}
 
-	/**
-	 * Äõ¸® ½ÇÇà
-	 */
+
 	public void executeQuery(String query) throws Exception {
 		
 		// execute Query
@@ -96,9 +81,7 @@ public class VigDBConnect {
 		
 	}
 
-	/**
-	 * Äõ¸® ½ÇÇà 
-	 */
+
 	public ResultSet executeQueryForSelect(String query) throws Exception {
 	
 		// If DB connection has been closed, try re-connect
@@ -106,7 +89,7 @@ public class VigDBConnect {
 			connectDB(DBinfo);
 		}
 		
-		LOGGER.info("Execute Query : {}",query);
+
 
 		// execute Query 
 		rs = stmt.executeQuery(query);
@@ -114,9 +97,7 @@ public class VigDBConnect {
 		return rs;
 	}
 
-	/**
-	 * DB Á¢¼Ó ÇØÁ¦ 
-	 */
+
 	public void disconnectDB() {
 		if(rs != null) { try {rs.close(); } catch (Exception ignore) {} }
 		if(stmt != null) { try {stmt.close();} catch (Exception ignore) {} }
@@ -124,23 +105,17 @@ public class VigDBConnect {
 		
 	}
 	
-	/**
-	 * Get Statement 
-	 */
+	
 	public Statement getStatement() {
 		return stmt;
 	}
 	
-	/**
-	 * Get ResultSet
-	 */
+
 	public ResultSet getResultSet () {
 		return rs;
 	}
 
-	/**
-	 * CommitQuery
-	 */
+
 	public void commitQuery() {
 		try {
 			conn.commit();
@@ -149,9 +124,7 @@ public class VigDBConnect {
 		}
 	}
 
-	/**
-	 * Rollback Query
-	 */
+
 	public void rollbackQuery() {
 		try {
 			conn.rollback();
