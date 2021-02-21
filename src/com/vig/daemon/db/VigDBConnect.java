@@ -8,20 +8,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-
-/*******************************************************************************
- *  @packageName: com.vig.daemon.db
- *  @fileName: DBconnectionImpl.java
- *  @content: DB connection �� query ����
- *  
- *  <pre>
- *  << Modification Information >>
- *    DATE            NAME           DESC
- *    -------------   ------------   ---------------------------------------
- *    2020. 12. 9.     SonGeon          create
- *  </pre>
- ******************************************************************************/
-
 public class VigDBConnect {
 	
 
