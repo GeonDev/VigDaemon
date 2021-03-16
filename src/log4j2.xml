@@ -1,13 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
-    <Appenders>
-        <Console name="LogToConsole" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-        </Console>
-    </Appenders>
-    <Loggers>
-        <Root level="debug">
-            <AppenderRef ref="LogToConsole"/>
-        </Root>
-    </Loggers>
+	<Appenders>
+	
+		<Console name="LogToConsole" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+
+		<!-- 로그를 파일로 저장 -->
+		<RollingFile name="SaveFile" fileName="./logs/daemon.log"
+			filePattern="./logs/daemon.%i.%d{yyyy-MM-dd}.log">
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+			<Policies>
+				<!-- 이 용량이 초과되면 아래 DefaultRolloverStrategy 정책만큼 넘버링 할거다. 
+				<SizeBasedTriggeringPolicy size="10MB" /> 
+				-->	
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+			</Policies>
+			<!-- 100개 초과되면 파일이 더 생성안된다. -->
+			<DefaultRolloverStrategy max="100" fileIndex="min" />
+		</RollingFile>
+
+
+	</Appenders>
+	<Loggers>
+
+		<!-- 모든 레벨의 로그를 확인 -->
+		<Root level="DEBUG">
+			<AppenderRef ref="LogToConsole" />
+			<AppenderRef ref="SaveFile" />		
+		</Root>
+
+
+		<Logger name="java.sql" level="WARN" additivity="false">
+			<AppenderRef ref="LogToConsole" />
+			<AppenderRef ref="SaveFile" />
+		</Logger>
+		
+		<!-- 일반 쿼츠 로그 : 에러 상태일떄만 표시 -->
+		<Logger name="org.quartz.core.QuartzSchedulerThread" level="WARN" additivity="false">
+		    <AppenderRef ref="LogToConsole" />
+		    <AppenderRef ref="SaveFile" />
+		</Logger>
+			
+
+		<!-- 내가 선언한 패키지 파일 -->
+		<Logger name="com.vig.daemon" level="DEBUG" additivity="false">
+			<AppenderRef ref="LogToConsole" />
+			<AppenderRef ref="SaveFile" />
+		</Logger>
+
+	</Loggers>
 </Configuration>
