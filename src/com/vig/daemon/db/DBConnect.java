@@ -2,11 +2,9 @@ package com.vig.daemon.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 import lombok.Data;
 
@@ -16,6 +14,7 @@ public class DBConnect {
 	private Connection conn = null;
 	private DBDto DBinfo = null;
 	private Statement stmt = null;
+	private PreparedStatement ps = null;
 	private ResultSet rs = null;
 
 	public Connection connectDB(DBDto DBinfo) {
@@ -71,11 +70,19 @@ public class DBConnect {
 	}
 
 	public void executeQuery(String query) throws Exception {
-
 		// execute Query
 		stmt.execute(query);
-
 	}
+	
+	
+	public boolean executeQuery(String query, int value) throws Exception {
+		ps = conn.prepareStatement(query);
+		ps.setInt(1, value);
+		
+		return ps.execute();		
+	}
+	
+	
 
 	public ResultSet executeQueryForSelect(String query) throws Exception {
 

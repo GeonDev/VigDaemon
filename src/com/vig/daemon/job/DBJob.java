@@ -34,15 +34,20 @@ public class DBJob implements Job{
 		srcDB.connectDB(srcDto);
 
 		try {
-			//쿼리 수행
-			//srcDB.executeQuery(jobData.get("SQL").toString());
-			//srcDB.commitQuery();
-		
 			LOGGER.debug(jobData.get("MODE").toString() +" ACTIVE" );
+	
+			int value = (Integer)jobData.get("DATE");
+			
+			//쿼리 수행
+			srcDB.executeQuery(jobData.get("SQL").toString(), value);
+			srcDB.commitQuery();
+		
+			LOGGER.debug(jobData.get("MODE").toString() +" COMPLETE" );
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			LOGGER.debug("[ERROR] "+ jobData.get("MODE").toString() +" FAIL" );
 			srcDB.rollbackQuery();
 		}
 	}

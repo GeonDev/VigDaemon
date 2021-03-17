@@ -2,6 +2,13 @@ package com.vig.daemon.db;
 
 import lombok.Data;
 
+/**
+ * 
+ * @author kada
+ * @content DB 커넥션 관련 정보를 담고 있는 단순 클래스
+ * 
+ * */
+
 @Data
 public class DBDto {
 	

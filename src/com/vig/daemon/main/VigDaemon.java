@@ -54,6 +54,7 @@ public class VigDaemon {
 		jobDateMap.put("MODE",mode);
 		jobDateMap.put("DB_INFO",ini.readInitoString(mode, "DB_INFO", ""));
 		jobDateMap.put("SQL",ini.readInitoString(mode, "SQL", ""));
+		jobDateMap.put("DATE",ini.readInitoInt(mode, "DATE", 99999));
 				
 		//수행 될 JOB 할당
 		JobDetail job = newJob(DBJob.class)

@@ -27,19 +27,14 @@
 	<Loggers>
 
 		<!-- 모든 레벨의 로그를 확인 -->
-		<Root level="DEBUG">
+		<Root level="INFO">
 			<AppenderRef ref="LogToConsole" />
 			<AppenderRef ref="SaveFile" />		
 		</Root>
 
-
-		<Logger name="java.sql" level="WARN" additivity="false">
-			<AppenderRef ref="LogToConsole" />
-			<AppenderRef ref="SaveFile" />
-		</Logger>
-		
+			
 		<!-- 일반 쿼츠 로그 : 에러 상태일떄만 표시 -->
-		<Logger name="org.quartz.core.QuartzSchedulerThread" level="WARN" additivity="false">
+		<Logger name="org.quartz" level="WARN" additivity="false">
 		    <AppenderRef ref="LogToConsole" />
 		    <AppenderRef ref="SaveFile" />
 		</Logger>
