@@ -30,22 +30,17 @@ public class VigDaemon {
 	
 	public VigDaemon(String modeOption) {
 		
-		// Create scheduleFactory
-		try {
+	try {
 			schedulerFactory = new StdSchedulerFactory();
 			scheduler = schedulerFactory.getScheduler();
-			
-		} catch (Exception e) {
+			setSchedulerjob(scheduler, modeOption);
+
+		} catch (SchedulerException e) {		
 			e.printStackTrace();
 		}
-		
-	
-		try {
-			setSchedulerjob(scheduler, modeOption);
-		} catch (SchedulerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+	    catch (Exception e) {
+	    	e.printStackTrace();
+	    }		
 	}
 	
 
@@ -53,8 +48,16 @@ public class VigDaemon {
 		JobDataMap jobDateMap = new JobDataMap();
 		jobDateMap.put("MODE",mode);
 		jobDateMap.put("DB_INFO",ini.readInitoString(mode, "DB_INFO", ""));
-		jobDateMap.put("SQL",ini.readInitoString(mode, "SQL", ""));
-		jobDateMap.put("DATE",ini.readInitoInt(mode, "DATE", 99999));
+		
+		int sqlCount = ini.readInitoInt(mode, "WORK_SQL", 1);
+		jobDateMap.put("SQL_COUNT",sqlCount);
+		
+		for(int i =1 ; i<=sqlCount; i++) {
+			jobDateMap.put("SQL_"+i ,ini.readInitoString(mode, "SQL_"+i, ""));
+		}
+		
+		jobDateMap.put("DATE_RANGE",ini.readInitoInt(mode, "DATE_RANGE", 99999));
+				
 				
 		//수행 될 JOB 할당
 		JobDetail job = newJob(DBJob.class)

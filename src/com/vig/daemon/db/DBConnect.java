@@ -82,6 +82,18 @@ public class DBConnect {
 		return ps.execute();		
 	}
 	
+	public boolean executeQuery(String query, int[] values ) throws Exception {
+		ps = conn.prepareStatement(query);
+	
+		for(int i=0;i<values.length; i++ ) {
+			ps.setInt(i+1, values[1]);
+		}
+		
+		
+		
+		return ps.execute();		
+	}
+	
 	
 
 	public ResultSet executeQueryForSelect(String query) throws Exception {
@@ -107,6 +119,12 @@ public class DBConnect {
 		if (stmt != null) {
 			try {
 				stmt.close();
+			} catch (Exception ignore) {
+			}
+		}
+		if (ps != null) {
+			try {
+				ps.close();
 			} catch (Exception ignore) {
 			}
 		}
