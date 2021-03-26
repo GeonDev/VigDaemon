@@ -42,26 +42,35 @@ public class DBJob implements Job{
 			
 			
 			switch (jobData.get("MODE").toString()) {
-			
-			case "LOG_DELETE":			
-				
-				ResultSet rs = srcDB.executeQueryForSelect(jobData.get("SQL_1").toString());
-				
-				while (rs.next()) {
-					int[] values = {rs.getInt(2), rs.getInt(2), rs.getInt(1) };					
-					
-					srcDB.executeQuery(jobData.get("SQL_2").toString(), values);
-					srcDB.executeQuery(jobData.get("SQL_3").toString(), date);
-				}
-				
-				break;	
 
-			default:
-				//쿼리 수행			
-				for( int i= 1; i<=sqlCount; i++) {				
-					srcDB.executeQuery(jobData.get("SQL_"+i).toString(), date);
-				}
-				break;
+				case "LOG_DELETE":
+	
+					// 삭제가 필요한 데이터를 가지고 옴
+					ResultSet rs = srcDB.executeQueryForSelect(jobData.get("SQL_1").toString());
+	
+					while (rs.next()) {
+						// 현재 값과 저장된 값을 비교하면서 불러온 값이 클 경우 변경
+						int[] values = { rs.getInt(2), rs.getInt(2), rs.getInt(1) };
+	
+						srcDB.executeQuery(jobData.get("SQL_2").toString(), values);
+						srcDB.executeQuery(jobData.get("SQL_3").toString(), date);
+					}
+					break;
+	
+				case "BAN_EXPIRATION":
+					for (int i = 1; i <= sqlCount; i++) {
+						//밴 기간보다 오래된 유저를 초기화 
+						srcDB.executeQuery(jobData.get("SQL_" + i).toString(), date);
+					}
+	
+					break;
+	
+				default:
+					// 쿼리 수행
+					for (int i = 1; i <= sqlCount; i++) {
+						srcDB.executeQuery(jobData.get("SQL_" + i).toString());
+					}
+					break;
 			}
 			
 			

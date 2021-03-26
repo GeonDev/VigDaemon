@@ -17,18 +17,14 @@ public class Start {
 
 		IniFileReader ini = new IniFileReader();
 
-		String isActive = ini.readInitoString("IS_ACTIVE", "ACTIVE", "N");
+		int ActiveDeamonCount = ini.readInitoInt("IS_ACTIVE", "DAEMON_COUNT", 1);
+		for (int i = 1; i <= ActiveDeamonCount; i++) {
 
-		if (isActive.equals("Y")) {
+			String mode = ini.readInitoString("IS_ACTIVE", "MODE_" + i, "");
 
-			int ActiveDeamonCount = ini.readInitoInt("IS_ACTIVE", "DAEMON_COUNT", 1);
-			for (int i = 1; i <= ActiveDeamonCount; i++) {
-
-				String mode = ini.readInitoString("IS_ACTIVE", "MODE_" + i, "");
-
-				VigDaemon daemon = new VigDaemon(mode);
-				daemon.startDaemon();
-			}
+			VigDaemon daemon = new VigDaemon(mode);
+			daemon.startDaemon();
 		}
 	}
+
 }

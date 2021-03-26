@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vig.daemon.common.IniFileReader;
 import com.vig.daemon.job.DBJob;
+import com.vig.daemon.job.FlieJob;
 
 public class VigDaemon {
 	
@@ -47,22 +48,39 @@ public class VigDaemon {
 	public void setSchedulerjob(Scheduler scheduler, String mode) throws SchedulerException {
 		JobDataMap jobDateMap = new JobDataMap();
 		jobDateMap.put("MODE",mode);
-		jobDateMap.put("DB_INFO",ini.readInitoString(mode, "DB_INFO", ""));
 		
-		int sqlCount = ini.readInitoInt(mode, "WORK_SQL", 1);
-		jobDateMap.put("SQL_COUNT",sqlCount);
+		String useDB = ini.readInitoString(mode, "USE_DB", "N");
 		
-		for(int i =1 ; i<=sqlCount; i++) {
-			jobDateMap.put("SQL_"+i ,ini.readInitoString(mode, "SQL_"+i, ""));
+		JobDetail job = null;
+		
+		if(useDB.equals("Y") ) {
+			jobDateMap.put("DB_INFO",ini.readInitoString(mode, "DB_INFO", ""));
+			
+			int sqlCount = ini.readInitoInt(mode, "WORK_SQL", 1);
+			jobDateMap.put("SQL_COUNT",sqlCount);
+			
+			for(int i =1 ; i<=sqlCount; i++) {
+				jobDateMap.put("SQL_"+i ,ini.readInitoString(mode, "SQL_"+i, ""));
+			}
+			
+			jobDateMap.put("DATE_RANGE",ini.readInitoInt(mode, "DATE_RANGE", 99999));
+			
+			//수행 될 JOB 할당 ,DB 사용
+			job = newJob(DBJob.class)
+					.usingJobData(jobDateMap)
+					.build();
+			
+
+		}else {
+			jobDateMap.put("FILE_PATH" ,ini.readInitoString(mode, "FILE_PATH", ""));
+			jobDateMap.put("FILE_TYPE" ,ini.readInitoString(mode, "FILE_TYPE", ""));
+			jobDateMap.put("DATE_RANGE",ini.readInitoInt(mode, "DATE_RANGE", 99999));
+					
+			//수행 될 JOB 할당, DB 미사용
+			job = newJob(FlieJob.class)
+					.usingJobData(jobDateMap)
+					.build();
 		}
-		
-		jobDateMap.put("DATE_RANGE",ini.readInitoInt(mode, "DATE_RANGE", 99999));
-				
-				
-		//수행 될 JOB 할당
-		JobDetail job = newJob(DBJob.class)
-				.usingJobData(jobDateMap)
-				.build();		
 		
 		
 		String crontab = ini.readInitoString(mode, "CRONTAB", "");		
@@ -78,7 +96,7 @@ public class VigDaemon {
 		//스케줄러 세팅
 		scheduler.scheduleJob(job, trigger);
 		
-		LOGGER.debug(mode +"DAEMON SET UP");
+		LOGGER.debug(mode +" DAEMON SET UP");
 		
 	}
 	
